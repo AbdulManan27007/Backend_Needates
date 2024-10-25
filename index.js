@@ -11,13 +11,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'http://localhost:3000', // frontend URL
+  origin: process.env.CLIENT_URL, // frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true, 
 }));
 
 app.use(express.json()); 
 app.use(cookieParser()); 
+
+app.get("/", (req, res) => {
+  res.status(200).send("Hello, world!");
+});
 
 app.use("/api/auth", authRoutes);
 
