@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 import { User } from "../models/usermodel.js";
+import { HotelDetails } from "../models/hoteldetails.js";
 
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import {
@@ -98,9 +99,7 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User Not " });
+      return res.status(400).json({ success: false, message: "User Not " });
     }
     const isPasswordValid = await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
@@ -215,4 +214,28 @@ export const checkAuth = async (req, res) => {
       },
     });
   } catch (error) {}
+};
+
+export const hoteldetails = async (req, res) => {
+  const { name, address, city, state, zipcode, personName, personContact } =
+    req.body;
+  try {
+    const newHotel = new HotelDetails({
+      name,
+      address,
+      city,
+      state,
+      zipcode,
+      personName,
+      personContact,
+    });
+    const savedHotel = await newHotel.save();
+    res
+      .status(201)
+      .json({ message: "Hotel details saved successfully", data: savedHotel });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to save hotel details", error: error.message });
+  }
 };

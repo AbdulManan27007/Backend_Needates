@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
   verificationTokenExpiresAt: {
-    type: Date,
+    type: Date, 
     default: null,
   },
 },{timestamps: true});
