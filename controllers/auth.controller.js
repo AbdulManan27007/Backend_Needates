@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 import { User } from "../models/usermodel.js";
 import { HotelDetails } from "../models/hoteldetails.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import {
@@ -216,10 +217,24 @@ export const checkAuth = async (req, res) => {
   } catch (error) {}
 };
 
+
+
 export const hoteldetails = async (req, res) => {
-  const { name, address, city, state, zipcode, personName, personContact } =
-    req.body;
+  const { name, address, city, state, zipcode, personName, personContact } = req.body;
+  
   try {
+    let pictureUrl = null;
+
+    if (req.file) {
+      const uploadResult = await uploadOnCloudinary(req.file.path);
+      if (uploadResult) {
+        pictureUrl = uploadResult.url;
+      } else {
+        console.error("Failed to upload picture to Cloudinary");
+        return res.status(500).json({ message: "Failed to upload picture" });
+      }
+    }
+
     const newHotel = new HotelDetails({
       name,
       address,
@@ -228,14 +243,13 @@ export const hoteldetails = async (req, res) => {
       zipcode,
       personName,
       personContact,
+      picture: pictureUrl,
     });
+
     const savedHotel = await newHotel.save();
-    res
-      .status(201)
-      .json({ message: "Hotel details saved successfully", data: savedHotel });
+    res.status(201).json({ message: "Hotel details saved successfully", data: savedHotel });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to save hotel details", error: error.message });
+    res.status(500).json({ message: "Failed to save hotel details", error: error.message });
   }
 };
+
