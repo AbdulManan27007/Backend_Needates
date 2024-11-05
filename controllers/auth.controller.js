@@ -217,24 +217,23 @@ export const checkAuth = async (req, res) => {
   } catch (error) {}
 };
 
-
-
 export const hoteldetails = async (req, res) => {
   const { name, address, city, state, zipcode, personName, personContact } = req.body;
   
   try {
-    let pictureUrl = null;
+    // let pictureUrl = null;
 
-    if (req.file) {
-      const uploadResult = await uploadOnCloudinary(req.file.path);
-      if (uploadResult) {
-        pictureUrl = uploadResult.url;
-      } else {
-        console.error("Failed to upload picture to Cloudinary");
-        return res.status(500).json({ message: "Failed to upload picture" });
-      }
-    }
+    // if (req.file) {
+    //   const uploadResult = await uploadOnCloudinary(req.file.path);
+    //   if (uploadResult) {
+    //     pictureUrl = uploadResult.url;
+    //   } else {
+    //     console.error("Failed to upload picture to Cloudinary");
+    //     return res.status(500).json({ message: "Failed to upload picture" });
+    //   }
+    // }
 
+console.log(req.file.path)    
     const newHotel = new HotelDetails({
       name,
       address,
@@ -243,7 +242,7 @@ export const hoteldetails = async (req, res) => {
       zipcode,
       personName,
       personContact,
-      picture: pictureUrl,
+      picture: req.file.path,
     });
 
     const savedHotel = await newHotel.save();
@@ -252,4 +251,3 @@ export const hoteldetails = async (req, res) => {
     res.status(500).json({ message: "Failed to save hotel details", error: error.message });
   }
 };
-

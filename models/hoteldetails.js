@@ -28,9 +28,9 @@ const hotelSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter your Phone Number"],
     },
-    picture: {
-      type: String,
-      required: [true, "Please upload a picture"], 
+    picture : {
+      type: String, // Use Buffer if storing binary data
+      required: [true, "Please upload a picture"],
     },
   },
   { timestamps: true }
